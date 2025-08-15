@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from 'react-native';
-import { X, BarChart3, Clock, TrendingDown, TrendingUp, Calendar, Smartphone } from 'lucide-react-native';
+import { X, ChartBar as BarChart3, Clock, TrendingDown, TrendingUp, Calendar, Smartphone } from 'lucide-react-native';
 import { ScreenTimeService } from '@/services/ScreenTimeService';
 
 interface InsightsModalProps {
