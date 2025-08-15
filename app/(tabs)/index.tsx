@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert, Linking, Modal, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { Target, TrendingDown, Award, CreditCard as Edit3, Calendar, MessageCircle, Smartphone, ChevronDown, Shield } from 'lucide-react-native';
+import { Target, TrendingDown, Award, CreditCard as Edit3, Calendar, MessageCircle, Smartphone, ChevronDown, Shield, Bell, ChartBar as BarChart3, Plus, Zap } from 'lucide-react-native';
 import { CircularProgress } from '@/components/CircularProgress';
+import { AchievementModal } from '@/components/AchievementModal';
+import { CustomGoalModal } from '@/components/CustomGoalModal';
+import { InsightsModal } from '@/components/InsightsModal';
 import { ScreenTimeService } from '@/services/ScreenTimeService';
+import { NotificationService } from '@/services/NotificationService';
+import { AchievementService, Achievement } from '@/services/AchievementService';
+import { CustomGoalService, CustomGoal } from '@/services/CustomGoalService';
+import * as Haptics from 'expo-haptics';
 
 export default function HomeScreen() {
   const [todayUsage, setTodayUsage] = useState(0);
@@ -16,10 +23,19 @@ export default function HomeScreen() {
   const [daysCompleted, setDaysCompleted] = useState(0);
   const [showReductionModal, setShowReductionModal] = useState(false);
   const [hasScreenTimePermission, setHasScreenTimePermission] = useState(false);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [showAchievements, setShowAchievements] = useState(false);
+  const [showCustomGoals, setShowCustomGoals] = useState(false);
+  const [showInsights, setShowInsights] = useState(false);
+  const [customGoals, setCustomGoals] = useState<CustomGoal[]>([]);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   useEffect(() => {
     loadData();
     checkScreenTimePermission();
+    loadAchievements();
+    loadCustomGoals();
+    checkNotificationPermissions();
     // Update every minute in a real app
     const interval = setInterval(loadData, 60000);
     return () => clearInterval(interval);
@@ -39,6 +55,21 @@ export default function HomeScreen() {
     setCurrentStreak(streak);
     setGoalReduction(reduction);
     setDaysCompleted(completed);
+  };
+
+  const loadAchievements = async () => {
+    const achievementData = await AchievementService.getAchievements();
+    setAchievements(achievementData);
+  };
+
+  const loadCustomGoals = async () => {
+    const goals = await CustomGoalService.getActiveGoals();
+    setCustomGoals(goals);
+  };
+
+  const checkNotificationPermissions = async () => {
+    const hasPermission = await NotificationService.requestPermissions();
+    setNotificationsEnabled(hasPermission);
   };
 
   const checkScreenTimePermission = async () => {
@@ -179,9 +210,42 @@ export default function HomeScreen() {
     Alert.alert('Goal Updated', `Your daily reduction goal has been set to ${minutes} minutes.`);
   };
 
+  const handleAchievementPress = async () => {
+    if (Platform.OS !== 'web') {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    setShowAchievements(true);
+  };
+
+  const handleCustomGoalCreated = (goal: CustomGoal) => {
+    setCustomGoals(prev => [...prev, goal]);
+    Alert.alert('Goal Created', `Your custom goal "${goal.title}" has been created!`);
+  };
+
   useEffect(() => {
     checkWeeklyCompletion();
+    updateAchievements();
   }, [daysCompleted]);
+
+  const updateAchievements = async () => {
+    // Check for new achievements
+    const newStreakAchievements = await AchievementService.checkStreakAchievements(currentStreak);
+    const newReductionAchievements = await AchievementService.checkReductionAchievements(todayUsage, weeklyAverage);
+    
+    if (newStreakAchievements.length > 0 || newReductionAchievements.length > 0) {
+      await loadAchievements();
+      
+      // Show achievement notification
+      const allNew = [...newStreakAchievements, ...newReductionAchievements];
+      if (allNew.length > 0) {
+        Alert.alert(
+          '🏆 Achievement Unlocked!',
+          `You've earned: ${allNew.map(a => a.title).join(', ')}`,
+          [{ text: 'View Achievements', onPress: () => setShowAchievements(true) }]
+        );
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -304,6 +368,15 @@ export default function HomeScreen() {
             <MessageCircle size={20} color="#60a5fa" />
             <Text style={styles.actionButtonText}>Share Progress with a Friend</Text>
           </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.actionButton} 
+            onPress={() => setShowInsights(true)}
+          >
+            <Zap size={20} color="#60a5fa" />
+            <Text style={styles.actionButtonText}>View Usage Insights</Text>
+          </TouchableOpacity>
+
           {showManualEntry && (
             <View style={styles.manualEntryCard}>
               <Text style={styles.manualEntryTitle}>Enter Today's Screen Time</Text>
@@ -321,6 +394,27 @@ export default function HomeScreen() {
               </View>
             </View>
           )}
+        </View>
+
+        {/* Quick Stats Row */}
+        <View style={styles.quickStatsRow}>
+          <TouchableOpacity style={styles.quickStat} onPress={handleAchievementPress}>
+            <Award size={16} color="#fbbf24" />
+            <Text style={styles.quickStatValue}>{achievements.filter(a => a.unlockedAt).length}</Text>
+            <Text style={styles.quickStatLabel}>Achievements</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.quickStat} onPress={() => setShowInsights(true)}>
+            <BarChart3 size={16} color="#60a5fa" />
+            <Text style={styles.quickStatValue}>{formatTime(weeklyAverage)}</Text>
+            <Text style={styles.quickStatLabel}>Weekly Avg</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.quickStat} onPress={() => setShowCustomGoals(true)}>
+            <Plus size={16} color="#34d399" />
+            <Text style={styles.quickStatValue}>{customGoals.length}</Text>
+            <Text style={styles.quickStatLabel}>Custom Goals</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Reduction Goal Modal */}
@@ -345,6 +439,26 @@ export default function HomeScreen() {
             </View>
           </View>
         </Modal>
+
+        {/* Achievement Modal */}
+        <AchievementModal
+          visible={showAchievements}
+          onClose={() => setShowAchievements(false)}
+          achievements={achievements}
+        />
+
+        {/* Custom Goal Modal */}
+        <CustomGoalModal
+          visible={showCustomGoals}
+          onClose={() => setShowCustomGoals(false)}
+          onGoalCreated={handleCustomGoalCreated}
+        />
+
+        {/* Insights Modal */}
+        <InsightsModal
+          visible={showInsights}
+          onClose={() => setShowInsights(false)}
+        />
       </ScrollView>
     </View>
   );
@@ -621,5 +735,38 @@ const styles = StyleSheet.create({
   },
   permissionButtonText: {
     color: '#34d399',
+  },
+  quickStatsRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 24,
+    marginBottom: 24,
+    gap: 12,
+  },
+  quickStat: {
+    flex: 1,
+    backgroundColor: '#1f2937',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  quickStatValue: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#f9fafb',
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  quickStatLabel: {
+    fontSize: 12,
+    color: '#9ca3af',
+    textAlign: 'center',
   },
 });
