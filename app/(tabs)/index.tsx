@@ -10,7 +10,7 @@ import { ScreenTimeService } from '@/services/ScreenTimeService';
 import { NotificationService } from '@/services/NotificationService';
 import { AchievementService, Achievement } from '@/services/AchievementService';
 import { CustomGoalService, CustomGoal } from '@/services/CustomGoalService';
-import * as Haptics from 'expo-haptics';
+// import * as Haptics from 'expo-haptics'; // Commented out for web compatibility
 
 export default function HomeScreen() {
   const [todayUsage, setTodayUsage] = useState(0);
@@ -211,9 +211,10 @@ export default function HomeScreen() {
   };
 
   const handleAchievementPress = async () => {
-    if (Platform.OS !== 'web') {
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
+    // Haptic feedback would be implemented in native version
+    // if (Platform.OS !== 'web') {
+    //   await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // }
     setShowAchievements(true);
   };
 

@@ -16,8 +16,8 @@ class ScreenTimeAPI {
     }
     
     // In a real implementation, this would use:
-    // import { DeviceActivity } from 'expo-device-activity';
-    // return await DeviceActivity.requestAuthorization();
+    // Native iOS Screen Time API integration would go here
+    // This requires custom native module development
     
     // Mock permission request
     return new Promise((resolve) => {
@@ -31,9 +31,8 @@ class ScreenTimeAPI {
     }
 
     // In a real implementation, this would use:
-    // import { DeviceActivity } from 'expo-device-activity';
-    // const data = await DeviceActivity.queryActivityData();
-    // return data.totalScreenTime;
+    // Native iOS Screen Time API integration would go here
+    // This requires custom native module development
     
     // Mock data for now
     const now = new Date();
