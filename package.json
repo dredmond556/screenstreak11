@@ -1,51 +1,163 @@
-{
-  "name": "screenstreak",
-  "main": "expo-router/entry",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "EXPO_NO_TELEMETRY=1 expo start",
-    "build:web": "expo export --platform web",
-    "lint": "expo lint"
-  },
-  "dependencies": {
-    "@expo/vector-icons": "^14.1.0",
-    "@lucide/lab": "^0.1.2",
-    "@react-native-async-storage/async-storage": "^2.2.0",
-    "@react-navigation/bottom-tabs": "^7.2.0",
-    "@react-navigation/native": "^7.0.14",
-    "expo": "^53.0.0",
-    "expo-blur": "~14.1.3",
-    "expo-build-properties": "^0.14.8",
-    "expo-camera": "~16.1.5",
-    "expo-constants": "~17.1.3",
-    "expo-device-activity": "^1.0.0",
-    "expo-font": "~13.2.2",
-    "expo-haptics": "~14.1.3",
-    "expo-linear-gradient": "~14.1.3",
-    "expo-linking": "~7.1.3",
-    "expo-router": "~5.0.2",
-    "expo-splash-screen": "~0.30.6",
-    "expo-status-bar": "~2.2.2",
-    "expo-symbols": "~0.4.3",
-    "expo-system-ui": "~5.0.5",
-    "expo-web-browser": "~14.1.5",
-    "lucide-react-native": "^0.475.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "react-native": "0.79.1",
-    "react-native-gesture-handler": "~2.24.0",
-    "react-native-reanimated": "~3.17.4",
-    "react-native-safe-area-context": "5.3.0",
-    "react-native-screens": "~4.10.0",
-    "react-native-svg": "^15.12.1",
-    "react-native-url-polyfill": "^2.0.0",
-    "react-native-web": "^0.20.0",
-    "react-native-webview": "13.13.5"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.25.2",
-    "@types/react": "~19.0.10",
-    "typescript": "~5.8.3"
+// Note: This import would be used in a real implementation
+// import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
+
+// Mock notification handler for web compatibility
+// In real implementation: Notifications.setNotificationHandler({...})
+
+interface NotificationSettings {
+  dailyReminders: boolean;
+  streakCelebrations: boolean;
+  goalWarnings: boolean;
+  motivationalCheckins: boolean;
+  reminderTime: string; // HH:MM format
+}
+
+export class NotificationService {
+  private static readonly STORAGE_KEY = 'notification_settings';
+  private static readonly SCHEDULED_NOTIFICATIONS_KEY = 'scheduled_notifications';
+
+  static async requestPermissions(): Promise<boolean> {
+    // Mock implementation for web compatibility
+    if (Platform.OS === 'web') {
+      Alert.alert(
+        'Notifications',
+        'Notification features will be available in the native app version.',
+        [{ text: 'OK' }]
+      );
+      return true;
+    }
+
+    // Real implementation would use expo-notifications
+  }
+
+  static async getSettings(): Promise<NotificationSettings> {
+    try {
+      const settings = await AsyncStorage.getItem(this.STORAGE_KEY);
+      return settings ? JSON.parse(settings) : {
+        dailyReminders: true,
+        streakCelebrations: true,
+        goalWarnings: true,
+        motivationalCheckins: true,
+        reminderTime: '20:00'
+      };
+    } catch (error) {
+      console.error('Error loading notification settings:', error);
+      return {
+        dailyReminders: true,
+        streakCelebrations: true,
+        goalWarnings: true,
+        motivationalCheckins: true,
+        reminderTime: '20:00'
+      };
+    }
+  }
+
+  static async updateSettings(settings: NotificationSettings): Promise<void> {
+    try {
+      await AsyncStorage.setItem(this.STORAGE_KEY, JSON.stringify(settings));
+      await this.rescheduleNotifications();
+    } catch (error) {
+      console.error('Error saving notification settings:', error);
+    }
+  }
+
+  static async scheduleDailyReminder(): Promise<void> {
+    const settings = await this.getSettings();
+    if (!settings.dailyReminders) return;
+
+    const [hours, minutes] = settings.reminderTime.split(':').map(Number);
+    
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: '🧠 ScreenStreak Check-in',
+        body: 'How\'s your screen time looking today? Stay strong!',
+        data: { type: 'daily_reminder' },
+      },
+      trigger: {
+        hour: hours,
+        minute: minutes,
+        repeats: true,
+      },
+    });
+  }
+
+  static async scheduleStreakCelebration(streakDays: number): Promise<void> {
+    const settings = await this.getSettings();
+    if (!settings.streakCelebrations) return;
+
+    const milestones = [7, 14, 30, 60, 100, 365];
+    if (milestones.includes(streakDays)) {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: `🎉 ${streakDays} Day Streak!`,
+          body: `Amazing! You've maintained your streak for ${streakDays} days. Your discipline is inspiring!`,
+          data: { type: 'streak_celebration', days: streakDays },
+        },
+        trigger: null, // Immediate
+      });
+    }
+  }
+
+  static async scheduleGoalWarning(minutesRemaining: number): Promise<void> {
+    const settings = await this.getSettings();
+    if (!settings.goalWarnings || minutesRemaining > 30) return;
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: '⚠️ Approaching Daily Goal',
+        body: `You have ${minutesRemaining} minutes left today. Your streak depends on it!`,
+        data: { type: 'goal_warning', minutes: minutesRemaining },
+      },
+      trigger: null, // Immediate
+    });
+  }
+
+  static async scheduleMotivationalCheckin(): Promise<void> {
+    const settings = await this.getSettings();
+    if (!settings.motivationalCheckins) return;
+
+    const messages = [
+      'Remember: Every moment you choose presence over scrolling, you\'re building a better life.',
+      'Your future self will thank you for the discipline you\'re building today.',
+      'Small wins compound. Each minute you save from screens is an investment in yourself.',
+      'You\'re not just reducing screen time - you\'re reclaiming your attention and focus.',
+      'Building self-discipline is like building muscle. Every choice makes you stronger.'
+    ];
+
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+
+    // Schedule random motivational messages throughout the week
+    const randomHour = Math.floor(Math.random() * 12) + 9; // 9 AM to 9 PM
+    const randomDay = Math.floor(Math.random() * 7) + 1; // 1-7 days from now
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: '💪 Building Discipline',
+        body: randomMessage,
+        data: { type: 'motivational_checkin' },
+      },
+      trigger: {
+        weekday: randomDay,
+        hour: randomHour,
+        minute: 0,
+        repeats: false,
+      },
+    });
+  }
+
+  static async rescheduleNotifications(): Promise<void> {
+    // Cancel all existing notifications
+    await Notifications.cancelAllScheduledNotificationsAsync();
+    
+    // Reschedule based on current settings
+    await this.scheduleDailyReminder();
+    await this.scheduleMotivationalCheckin();
+  }
+
+  static async cancelAllNotifications(): Promise<void> {
+    await Notifications.cancelAllScheduledNotificationsAsync();
   }
 }

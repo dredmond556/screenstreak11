@@ -20,12 +20,13 @@
       "expo-router", 
       "expo-font", 
       "expo-web-browser",
+      "expo-notifications",
       [
         "expo-build-properties",
         {
           "ios": {
             "infoPlist": {
-              "NSScreenTimeUsageDescription": "ScreenStreak needs access to your screen time data to help you track and reduce your smartphone usage. This data stays on your device and is used only to calculate your daily goals and streak progress."
+              "NSUserNotificationsUsageDescription": "ScreenStreak sends helpful reminders and celebrates your achievements to keep you motivated on your digital wellness journey."
             }
           }
         }
@@ -35,8 +36,8 @@
       "typedRoutes": true
     },
     "privacy": {
-      "screenTimeUsage": {
-        "NSScreenTimeUsageDescription": "ScreenStreak helps you build self-discipline by tracking your screen time progress. Your data is processed locally and never shared with third parties."
+      "userNotifications": {
+        "NSUserNotificationsUsageDescription": "ScreenStreak sends personalized reminders and achievement notifications to support your digital wellness goals."
       }
     }
   }
