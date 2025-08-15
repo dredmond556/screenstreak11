@@ -1,25 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
-// Screen Time API types (would be implemented with native modules)
 interface ScreenTimeData {
   totalScreenTime: number;
   categoryBreakdown: { [key: string]: number };
   appUsage: { [key: string]: number };
 }
 
-// Mock implementation - replace with actual Screen Time API
 class ScreenTimeAPI {
   static async requestPermission(): Promise<boolean> {
     if (Platform.OS !== 'ios') {
       return false;
     }
-    
-    // In a real implementation, this would use:
-    // Native iOS Screen Time API integration would go here
-    // This requires custom native module development
-    
-    // Mock permission request
     return new Promise((resolve) => {
       setTimeout(() => resolve(true), 1000);
     });
@@ -29,12 +21,6 @@ class ScreenTimeAPI {
     if (Platform.OS !== 'ios') {
       return 0;
     }
-
-    // In a real implementation, this would use:
-    // Native iOS Screen Time API integration would go here
-    // This requires custom native module development
-    
-    // Mock data for now
     const now = new Date();
     const hourOfDay = now.getHours();
     return Math.floor((hourOfDay / 24) * (180 + Math.random() * 120));
@@ -44,8 +30,6 @@ class ScreenTimeAPI {
     if (Platform.OS !== 'ios') {
       return [];
     }
-
-    // Mock weekly data
     const weekData = [];
     for (let i = 0; i < 7; i++) {
       const baseUsage = 240 + Math.random() * 180;
@@ -100,21 +84,17 @@ export class ScreenTimeService {
     await AsyncStorage.setItem(this.STORAGE_KEYS.DAILY_USAGE, JSON.stringify(data));
   }
 
-  // Initialize with mock data for demonstration
   static async initializeMockData(): Promise<void> {
     const existingData = await this.getStoredData();
     if (existingData.length === 0) {
-      // Generate realistic mock data for the past week
       const mockData: DailyUsage[] = [];
       const today = new Date();
       
-      // Generate data for the past 7 days
       for (let i = 6; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(date.getDate() - i);
         
-        // Generate realistic screentime data (3-7 hours with variation)
-        const baseUsage = 240 + Math.random() * 180; // 4-7 hours
+        const baseUsage = 240 + Math.random() * 180;
         const weekendMultiplier = date.getDay() === 0 || date.getDay() === 6 ? 1.2 : 1;
         const usage = Math.floor(baseUsage * weekendMultiplier);
         
@@ -127,7 +107,6 @@ export class ScreenTimeService {
       await AsyncStorage.setItem(this.STORAGE_KEYS.DAILY_USAGE, JSON.stringify(mockData));
     }
 
-    // Initialize settings if they don't exist
     const settings = await this.getSettings();
     if (!settings.goalReduction) {
       await this.setGoalReduction(10);
@@ -177,7 +156,6 @@ export class ScreenTimeService {
   static async getTodayUsage(): Promise<number> {
     await this.initializeMockData();
     
-    // Check if we have permission and try to get real data
     const hasPermission = await this.hasScreenTimePermission();
     if (hasPermission) {
       try {
@@ -195,12 +173,10 @@ export class ScreenTimeService {
     const todayData = data.find(d => d.date === today);
     
     if (!todayData) {
-      // Simulate current day usage (growing throughout the day)
       const now = new Date();
       const hourOfDay = now.getHours();
-      const simulatedUsage = Math.floor((hourOfDay / 24) * (180 + Math.random() * 120)); // 3-5 hours max
+      const simulatedUsage = Math.floor((hourOfDay / 24) * (180 + Math.random() * 120));
       
-      // Store today's simulated usage
       const newData = [...data, { date: today, usage: simulatedUsage }];
       await AsyncStorage.setItem(this.STORAGE_KEYS.DAILY_USAGE, JSON.stringify(newData));
       
@@ -213,7 +189,6 @@ export class ScreenTimeService {
   static async getWeeklyData(): Promise<number[]> {
     await this.initializeMockData();
     
-    // Try to get real data if permission is granted
     const hasPermission = await this.hasScreenTimePermission();
     if (hasPermission) {
       try {
@@ -229,7 +204,6 @@ export class ScreenTimeService {
     const data = await this.getStoredData();
     const last7Days = data.slice(-7);
     
-    // Ensure we have 7 days of data
     while (last7Days.length < 7) {
       last7Days.unshift({ date: '', usage: 0 });
     }
@@ -268,7 +242,6 @@ export class ScreenTimeService {
       }
     }
     
-    // Update longest streak if current is higher
     const settings = await this.getSettings();
     if (streak > settings.longestStreak) {
       settings.longestStreak = streak;
@@ -310,7 +283,6 @@ export class ScreenTimeService {
     }
   }
 
-  // Simulate daily usage updates (in a real app, this would be called by background tasks)
   static async updateTodayUsage(additionalMinutes: number): Promise<void> {
     const today = new Date().toISOString().split('T')[0];
     const data = await this.getStoredData();

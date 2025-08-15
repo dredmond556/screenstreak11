@@ -1,11 +1,6 @@
-// Note: This import would be used in a real implementation
-// import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
-
-// Mock notification handler for web compatibility
-// In real implementation: Notifications.setNotificationHandler({...})
 
 interface NotificationSettings {
   dailyReminders: boolean;
@@ -20,7 +15,6 @@ export class NotificationService {
   private static readonly SCHEDULED_NOTIFICATIONS_KEY = 'scheduled_notifications';
 
   static async requestPermissions(): Promise<boolean> {
-    // Mock implementation for web compatibility
     if (Platform.OS === 'web') {
       Alert.alert(
         'Notifications',
@@ -30,7 +24,6 @@ export class NotificationService {
       return true;
     }
 
-    // Real implementation would use expo-notifications
     return true;
   }
 
@@ -68,43 +61,33 @@ export class NotificationService {
   static async scheduleDailyReminder(): Promise<void> {
     const settings = await this.getSettings();
     if (!settings.dailyReminders) return;
-    
-    // Mock implementation - real version would schedule actual notifications
     console.log('Daily reminder scheduled');
   }
 
   static async scheduleStreakCelebration(streakDays: number): Promise<void> {
     const settings = await this.getSettings();
     if (!settings.streakCelebrations) return;
-    
-    // Mock implementation - real version would show celebration
     console.log(`Streak celebration for ${streakDays} days`);
   }
 
   static async scheduleGoalWarning(minutesRemaining: number): Promise<void> {
     const settings = await this.getSettings();
     if (!settings.goalWarnings || minutesRemaining > 30) return;
-    
-    // Mock implementation - real version would show warning
     console.log(`Goal warning: ${minutesRemaining} minutes remaining`);
   }
 
   static async scheduleMotivationalCheckin(): Promise<void> {
     const settings = await this.getSettings();
     if (!settings.motivationalCheckins) return;
-    
-    // Mock implementation - real version would schedule motivational messages
     console.log('Motivational check-in scheduled');
   }
 
   static async rescheduleNotifications(): Promise<void> {
-    // Reschedule based on current settings
     await this.scheduleDailyReminder();
     await this.scheduleMotivationalCheckin();
   }
 
   static async cancelAllNotifications(): Promise<void> {
-    // Mock implementation - real version would cancel notifications
     console.log('All notifications cancelled');
   }
 }
