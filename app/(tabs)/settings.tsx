@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform, Linking } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { Target, Trash2, Info, Smartphone, TriangleAlert as AlertTriangle } from 'lucide-react-native';
+import { Target, Trash2, Info, Smartphone, TriangleAlert as AlertTriangle, Shield } from 'lucide-react-native';
 import { ScreenTimeService } from '@/services/ScreenTimeService';
 
 const REDUCTION_OPTIONS = [1, 2, 5, 10];
@@ -10,9 +10,11 @@ export default function SettingsScreen() {
   const [goalReduction, setGoalReduction] = useState(10);
   const [weeklyAverage, setWeeklyAverage] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [hasScreenTimePermission, setHasScreenTimePermission] = useState(false);
 
   useEffect(() => {
     loadSettings();
+    checkScreenTimePermission();
   }, []);
 
   const loadSettings = async () => {
@@ -32,6 +34,33 @@ export default function SettingsScreen() {
       'Goal Updated',
       `Your daily reduction goal has been set to ${minutes} minutes less than your weekly average.`
     );
+  };
+
+  const checkScreenTimePermission = async () => {
+    const granted = await ScreenTimeService.hasScreenTimePermission();
+    setHasScreenTimePermission(granted);
+  };
+
+  const enableScreenTimeAccess = async () => {
+    if (Platform.OS !== 'ios') {
+      Alert.alert('Not Available', 'Screen time tracking is only available on iOS devices.');
+      return;
+    }
+    const granted = await ScreenTimeService.requestScreenTimePermission();
+    if (granted) {
+      setHasScreenTimePermission(true);
+      Alert.alert('Success', 'Screen time access enabled! Your data will now be more accurate.');
+    } else {
+      Alert.alert('Permission Denied', 'You can enable screen time access later in iOS Settings.');
+    }
+  };
+
+  const openSystemSettings = async () => {
+    try {
+      await Linking.openSettings();
+    } catch {
+      Alert.alert('Unavailable', 'Unable to open system settings on this device.');
+    }
   };
 
   const handleResetData = () => {
@@ -140,6 +169,35 @@ export default function SettingsScreen() {
               <Text style={styles.summaryLabel}>Weekly Average</Text>
             </View>
           </View>
+        </View>
+
+        {/* Screen Time Access (iOS) */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Shield size={24} color="#34d399" />
+            <Text style={styles.sectionTitle}>Screen Time Access</Text>
+          </View>
+          <Text style={styles.sectionDescription}>
+            Enable iOS Screen Time access to auto-populate your daily usage. Your data stays on device.
+          </Text>
+          {Platform.OS === 'ios' ? (
+            <>
+              {!hasScreenTimePermission && (
+                <TouchableOpacity style={[styles.actionButton, styles.permissionButton]} onPress={enableScreenTimeAccess}>
+                  <Shield size={20} color="#34d399" />
+                  <Text style={[styles.actionButtonText, styles.permissionButtonText]}>Enable Screen Time Access</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity style={styles.actionButton} onPress={openSystemSettings}>
+                <Smartphone size={20} color="#60a5fa" />
+                <Text style={styles.actionButtonText}>Open iOS Settings</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <View style={styles.tipCard}>
+              <Text style={styles.tipText}>Screen Time integration is available on iOS devices.</Text>
+            </View>
+          )}
         </View>
 
         {/* Data Management */}
@@ -365,6 +423,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#EF4444',
     marginLeft: 8,
+  },
+  permissionButton: {
+    backgroundColor: '#064e3b',
+    borderWidth: 1,
+    borderColor: '#34d399',
+  },
+  permissionButtonText: {
+    color: '#34d399',
   },
   warningText: {
     fontSize: 12,
