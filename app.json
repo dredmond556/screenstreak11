@@ -11,7 +11,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.screenstreak.app",
-      "buildNumber": "1.0.0"
+      "buildNumber": "1.0.0",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "ScreenStreak uses the photo library when you choose to share or pick images.",
+        "NSPhotoLibraryAddUsageDescription": "ScreenStreak may save images to your photo library when exporting or sharing content.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,6 +28,16 @@
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
+    },
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "backgroundColor": "#111827",
+      "resizeMode": "contain",
+      "dark": {
+        "image": "./assets/images/icon.png",
+        "backgroundColor": "#0b1220",
+        "resizeMode": "contain"
+      }
     },
     "plugins": [
       "expo-router"
