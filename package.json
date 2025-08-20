@@ -14,7 +14,7 @@
     "eas:build:ios": "eas build -p ios --profile production",
     "eas:submit:ios": "eas submit -p ios --latest",
     "test:screenshots": "playwright test tests/screenshots.spec.ts",
-    "postinstall": "expo install --fix || true"
+    "postinstall": "expo install --fix || true && node scripts/fetch-assets.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",

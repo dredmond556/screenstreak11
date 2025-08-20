@@ -156,6 +156,12 @@ const activities: Activity[] = [
 ];
 
 export default function AlternativesScreen() {
+  // Show a rotating subset (half) of activities, changes daily
+  const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+  const start = dayIndex % activities.length;
+  const half = Math.max(1, Math.floor(activities.length / 2));
+  const rotated = [...activities.slice(start), ...activities.slice(0, start)];
+  const visible = rotated.slice(0, half);
   const openResourceLink = (activity: string) => {
     const urls: { [key: string]: string } = {
       exercise: 'https://www.youtube.com/results?search_query=beginner+workout+routines',
@@ -206,7 +212,7 @@ export default function AlternativesScreen() {
 
         {/* Activities Grid */}
         <View style={styles.activitiesContainer}>
-          {activities.map((activity) => (
+          {visible.map((activity) => (
             <View key={activity.id} style={styles.activityCard}>
               <View style={styles.activityHeader}>
                 <View style={[styles.iconContainer, { backgroundColor: activity.color }]}>
@@ -268,7 +274,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#111827',
   },
   scrollContent: {
-    paddingBottom: 20,
+    paddingTop: 16,
+    paddingBottom: 32,
   },
   header: {
     paddingHorizontal: 24,

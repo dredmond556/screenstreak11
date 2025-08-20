@@ -4,7 +4,7 @@
     "slug": "screenstreak",
     "version": "1.0.0",
     "orientation": "portrait",
-    // icon removed to avoid missing asset during setup, add your icon file and path here when ready
+    "icon": "./assets/images/icon.png",
     "scheme": "screenstreak",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -18,12 +18,27 @@
         "ITSAppUsesNonExemptEncryption": false
       }
     },
-    "android": {},
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#111827"
+      }
+    },
     "web": {
       "bundler": "metro",
-      "output": "static"
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
     },
-    // splash removed to avoid missing asset during setup, add images when ready
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "backgroundColor": "#111827",
+      "resizeMode": "contain",
+      "dark": {
+        "image": "./assets/images/splash.png",
+        "backgroundColor": "#0b1220",
+        "resizeMode": "contain"
+      }
+    },
     "plugins": [
       "expo-router"
     ],

@@ -34,9 +34,9 @@ export class NotificationService {
       return settings ? JSON.parse(settings) : {
         dailyReminders: true,
         streakCelebrations: true,
-        goalWarnings: true,
-        motivationalCheckins: true,
-        weeklyDigest: true,
+        goalWarnings: false,
+        motivationalCheckins: false,
+        weeklyDigest: false,
         reminderTime: '20:00'
       };
     } catch (error) {
@@ -44,9 +44,9 @@ export class NotificationService {
       return {
         dailyReminders: true,
         streakCelebrations: true,
-        goalWarnings: true,
-        motivationalCheckins: true,
-        weeklyDigest: true,
+        goalWarnings: false,
+        motivationalCheckins: false,
+        weeklyDigest: false,
         reminderTime: '20:00'
       };
     }

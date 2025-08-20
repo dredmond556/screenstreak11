@@ -18,23 +18,24 @@ const SUGGESTIONS = [
 ];
 
 export function SuggestionsPanel({ title = "Senay's Suggestions" }: SuggestionsPanelProps) {
+  // Rotate a single suggestion daily
+  const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % SUGGESTIONS.length;
+  const tip = SUGGESTIONS[dayIndex];
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Lightbulb size={20} color="#a78bfa" />
         <Text style={styles.title}>{title}</Text>
       </View>
-      <Text style={styles.subtitle}>General life philosophies</Text>
+      <Text style={styles.subtitle}>General life philosophy</Text>
 
       <View style={styles.list}>
-        {SUGGESTIONS.map((tip, index) => (
-          <View key={index} style={styles.card}>
-            <View style={styles.iconWrap}>
-              <Quote size={16} color="#9ca3af" />
-            </View>
-            <Text style={styles.tipText}>{tip}</Text>
+        <View style={styles.card}>
+          <View style={styles.iconWrap}>
+            <Quote size={16} color="#9ca3af" />
           </View>
-        ))}
+          <Text style={styles.tipText}>{tip}</Text>
+        </View>
       </View>
     </View>
   );
