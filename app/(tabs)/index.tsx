@@ -366,6 +366,14 @@ export default function HomeScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity 
+            style={styles.actionButton} 
+            onPress={handleAchievementPress}
+          >
+            <Award size={20} color="#fbbf24" />
+            <Text style={styles.actionButtonText}>View Achievements</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
             style={styles.actionButton}
             onPress={async () => {
               const ok = await StreakFreezeService.useFreezeForToday();
@@ -410,26 +418,7 @@ export default function HomeScreen() {
           )}
         </View>
 
-        {/* Quick Stats Row */}
-        <View style={styles.quickStatsRow}>
-          <TouchableOpacity style={styles.quickStat} onPress={handleAchievementPress}>
-            <Award size={16} color="#fbbf24" />
-            <Text style={styles.quickStatValue}>{achievements.filter(a => a.unlockedAt).length}</Text>
-            <Text style={styles.quickStatLabel} numberOfLines={1}>Achievements</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.quickStat} onPress={() => setShowInsights(true)}>
-            <BarChart3 size={16} color="#60a5fa" />
-            <Text style={styles.quickStatValue}>{formatTime(weeklyAverage)}</Text>
-            <Text style={styles.quickStatLabel}>Weekly Avg</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.quickStat} onPress={() => setShowCustomGoals(true)}>
-            <Plus size={16} color="#34d399" />
-            <Text style={styles.quickStatValue}>{customGoals.length}</Text>
-            <Text style={styles.quickStatLabel}>Custom Goals</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Quick Stats Row removed for simplicity */}
 
         {/* Senay's Suggestions on Home */}
         <View style={{ paddingHorizontal: 24, marginBottom: 24 }}>

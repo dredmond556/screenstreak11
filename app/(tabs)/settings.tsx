@@ -288,27 +288,12 @@ export default function SettingsScreen() {
           </Text>
         </View>
 
-        {/* Building Self-Discipline Tips */}
+        {/* Building Self-Discipline Tips (condensed) */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>💡 Building Self-Discipline</Text>
           <View style={styles.tipCard}>
             <Text style={styles.tipText}>
-              <Text style={styles.tipBold}>Start Small:</Text> Replace just minutes of screen time with a meaningful activity. Small wins build lasting discipline.
-            </Text>
-          </View>
-          <View style={styles.tipCard}>
-            <Text style={styles.tipText}>
-              <Text style={styles.tipBold}>Schedule It:</Text> Treat these activities as important appointments with yourself. Self-discipline thrives on structure.
-            </Text>
-          </View>
-          <View style={styles.tipCard}>
-            <Text style={styles.tipText}>
-              <Text style={styles.tipBold}>Stay Accountable:</Text> Share your progress with friends. External accountability strengthens internal discipline.
-            </Text>
-          </View>
-          <View style={styles.tipCard}>
-            <Text style={styles.tipText}>
-              <Text style={styles.tipBold}>Celebrate Wins:</Text> Acknowledge every moment you choose a meaningful activity over mindless scrolling. You're building a better life.
+              Start small, schedule it, stay accountable, and celebrate wins. Consistency compounds.
             </Text>
           </View>
         </View>

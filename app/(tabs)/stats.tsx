@@ -74,32 +74,7 @@ export default function StatsScreen() {
           <Text style={styles.headerSubtitle}>Track your progress and stay accountable</Text>
         </View>
 
-        {/* Overview Cards */}
-        <View style={styles.statsGrid}>
-          <View style={styles.overviewCard}>
-            <View style={styles.cardIcon}>
-              <Calendar size={24} color="#60a5fa" />
-            </View>
-            <Text style={styles.cardValue}>{formatTime(totalWeeklyUsage)}</Text>
-            <Text style={styles.cardLabel}>Total This Week</Text>
-          </View>
-
-          <View style={styles.overviewCard}>
-            <View style={styles.cardIcon}>
-              <TrendingDown size={24} color="#34d399" />
-            </View>
-            <Text style={styles.cardValue}>{formatTime(weeklyAverage)}</Text>
-            <Text style={styles.cardLabel}>Daily Average</Text>
-          </View>
-
-          <View style={styles.overviewCard}>
-            <View style={styles.cardIcon}>
-              <Award size={24} color="#fbbf24" />
-            </View>
-            <Text style={styles.cardValue}>{longestStreak} 🧠</Text>
-            <Text style={styles.cardLabel}>Longest Streak</Text>
-          </View>
-        </View>
+        {/* Overview removed for simplicity; keep weekly + history */}
 
         {/* Weekly Chart */}
         <View style={styles.weeklySection}>

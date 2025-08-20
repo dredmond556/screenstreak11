@@ -223,29 +223,7 @@ export default function AlternativesScreen() {
                 </View>
               </View>
 
-              <View style={styles.activityMeta}>
-                <View style={styles.metaItem}>
-                  <Text style={styles.metaLabel}>Time Needed:</Text>
-                  <Text style={styles.metaValue}>{activity.timeNeeded}</Text>
-                </View>
-                <View style={styles.metaItem}>
-                  <Text style={styles.metaLabel}>Difficulty:</Text>
-                  <Text style={[styles.metaValue, { color: getDifficultyColor(activity.difficulty) }]}>
-                    {activity.difficulty}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.benefitsSection}>
-                <Text style={styles.benefitsTitle}>Benefits:</Text>
-                <View style={styles.benefitsList}>
-                  {activity.benefits.map((benefit, index) => (
-                    <View key={index} style={styles.benefitItem}>
-                      <Text style={styles.benefitText}>• {benefit}</Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
+              {/* Simplified: remove meta and benefits for a cleaner list */}
 
               <TouchableOpacity 
                 style={styles.resourceButton}
@@ -316,7 +294,7 @@ const styles = StyleSheet.create({
   },
   activityHeader: {
     flexDirection: 'row',
-    marginBottom: 16,
+    marginBottom: 8,
   },
   iconContainer: {
     width: 48,
