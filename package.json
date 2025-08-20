@@ -13,12 +13,13 @@
     "publish": "expo publish",
     "eas:build:ios": "eas build -p ios --profile production",
     "eas:submit:ios": "eas submit -p ios --latest",
-    "test:screenshots": "playwright test tests/screenshots.spec.ts"
+    "test:screenshots": "playwright test tests/screenshots.spec.ts",
+    "postinstall": "expo install --fix || true"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@react-native-async-storage/async-storage": "1.23.1",
-    "expo": "~51.0.28",
+    "expo": "~53.0.0",
     "expo-constants": "~16.0.2",
     "expo-device": "~6.0.2",
     "expo-document-picker": "~12.0.2",
@@ -35,11 +36,11 @@
     "lucide-react-native": "^0.539.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.74.5",
+    "react-native": "0.76.0",
     "react-native-safe-area-context": "4.10.5",
     "react-native-screens": "3.31.1",
     "react-native-svg": "^15.12.1",
-    "react-native-web": "~0.19.10"
+    "react-native-web": "~0.19.12"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
