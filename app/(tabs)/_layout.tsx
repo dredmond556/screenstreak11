@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Smartphone, ChartBar as BarChart3, Settings, Lightbulb, BookOpen } from 'lucide-react-native';
+import { Smartphone, ChartBar as BarChart3, Settings, Lightbulb } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import { StyleSheet } from 'react-native';
 
@@ -52,15 +52,6 @@ export default function TabLayout() {
           title: 'Alternatives',
           tabBarIcon: ({ size, color }) => (
             <Lightbulb size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="suggestions"
-        options={{
-          title: "Senay's Suggestions",
-          tabBarIcon: ({ size, color }) => (
-            <BookOpen size={size} color={color} />
           ),
         }}
       />

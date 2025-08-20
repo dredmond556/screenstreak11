@@ -19,6 +19,7 @@ import {
   Mountain,
   Coffee
 } from 'lucide-react-native';
+import { SuggestionsPanel } from '@/components/SuggestionsPanel';
 
 interface Activity {
   id: string;
@@ -251,6 +252,11 @@ export default function AlternativesScreen() {
           ))}
         </View>
 
+        {/* Senay's Suggestions */}
+        <View style={styles.suggestionsSection}>
+          <SuggestionsPanel />
+        </View>
+
       </ScrollView>
     </View>
   );
@@ -284,6 +290,11 @@ const styles = StyleSheet.create({
   activitiesContainer: {
     paddingHorizontal: 24,
     paddingTop: 24,
+  },
+  suggestionsSection: {
+    paddingHorizontal: 0,
+    paddingTop: 8,
+    paddingBottom: 24,
   },
   activityCard: {
     backgroundColor: '#1f2937',
