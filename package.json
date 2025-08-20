@@ -12,7 +12,8 @@
     "build:web": "expo export -p web",
     "publish": "expo publish",
     "eas:build:ios": "eas build -p ios --profile production",
-    "eas:submit:ios": "eas submit -p ios --latest"
+    "eas:submit:ios": "eas submit -p ios --latest",
+    "test:screenshots": "playwright test tests/screenshots.spec.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
@@ -44,7 +45,8 @@
     "@babel/core": "^7.20.0",
     "@types/react": "~18.2.45",
     "typescript": "~5.3.3",
-    "eas-cli": "^5.0.0"
+    "eas-cli": "^5.0.0",
+    "@playwright/test": "^1.46.0"
   },
   "private": true
 }

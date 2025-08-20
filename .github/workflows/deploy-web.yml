@@ -38,6 +38,20 @@ jobs:
           CI: '1'
         run: npx expo export -p web --output-dir dist --base-url /${{ github.event.repository.name }}/
 
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Take screenshots (web)
+        env:
+          BASE_URL: https://dredmond556.github.io/${{ github.event.repository.name }}
+        run: npx playwright test tests/screenshots.spec.ts
+
+      - name: Upload screenshots artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
