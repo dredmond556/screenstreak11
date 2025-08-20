@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
   },
   weeklySection: {
     paddingHorizontal: 24,
-    marginBottom: 32,
+    marginBottom: 48,
   },
   sectionTitle: {
     fontSize: 20,

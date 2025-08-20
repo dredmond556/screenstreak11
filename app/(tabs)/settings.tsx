@@ -323,7 +323,7 @@ export default function SettingsScreen() {
         </View>
 
         {/* Contact Us */}
-        <View style={styles.section}>
+        <View style={[styles.section, { paddingBottom: 48 }] }>
           <Text style={styles.sectionTitle}>Contact Us</Text>
           <TouchableOpacity
             style={styles.actionButton}

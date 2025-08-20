@@ -19,7 +19,6 @@ import {
   Mountain,
   Coffee
 } from 'lucide-react-native';
-import { SuggestionsPanel } from '@/components/SuggestionsPanel';
 
 interface Activity {
   id: string;
@@ -252,16 +251,13 @@ export default function AlternativesScreen() {
                 style={styles.resourceButton}
                 onPress={() => openResourceLink(activity.id)}
               >
-                <Text style={styles.resourceButtonText}>Find Resources</Text>
+                <Text style={styles.resourceButtonText}>Learn / Do This</Text>
               </TouchableOpacity>
             </View>
           ))}
         </View>
 
-        {/* Senay's Suggestions */}
-        <View style={styles.suggestionsSection}>
-          <SuggestionsPanel />
-        </View>
+        {/* Senay's Suggestions removed from Alternatives */}
 
       </ScrollView>
     </View>

@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     marginBottom: 8,
-    paddingHorizontal: 24,
+    paddingHorizontal: 0,
   },
   title: {
     fontSize: 18,
@@ -61,11 +61,11 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 12,
     color: '#9ca3af',
-    paddingHorizontal: 24,
+    paddingHorizontal: 0,
     marginBottom: 12,
   },
   list: {
-    paddingHorizontal: 24,
+    paddingHorizontal: 0,
     gap: 10,
   },
   card: {
