@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
+import { AppleScreenTimeBridge } from './AppleScreenTimeBridge';
 
 interface ScreenTimeData {
   totalScreenTime: number;
@@ -159,7 +160,9 @@ export class ScreenTimeService {
     const hasPermission = await this.hasScreenTimePermission();
     if (hasPermission) {
       try {
-        const realUsage = await ScreenTimeAPI.getTodayScreenTime();
+        // Try native iOS bridge first (iOS 16+), fallback to local stub
+        const nativeUsage = await AppleScreenTimeBridge.getTodayUsageFromNative();
+        const realUsage = nativeUsage > 0 ? nativeUsage : await ScreenTimeAPI.getTodayScreenTime();
         if (realUsage > 0) {
           return realUsage;
         }
@@ -299,7 +302,15 @@ export class ScreenTimeService {
 
   static async requestScreenTimePermission(): Promise<boolean> {
     try {
-      const granted = await ScreenTimeAPI.requestPermission();
+      let granted = false;
+      if (AppleScreenTimeBridge.isSupported()) {
+        const auth = await AppleScreenTimeBridge.requestAuthorization();
+        if (auth) {
+          granted = true;
+        }
+      } else {
+        granted = await ScreenTimeAPI.requestPermission();
+      }
       await AsyncStorage.setItem(this.STORAGE_KEYS.PERMISSION_GRANTED, granted.toString());
       return granted;
     } catch (error) {

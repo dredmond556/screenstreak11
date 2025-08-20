@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform, 
 import { StatusBar } from 'expo-status-bar';
 import { Target, Trash2, Info, Smartphone, TriangleAlert as AlertTriangle, Shield } from 'lucide-react-native';
 import { ScreenTimeService } from '@/services/ScreenTimeService';
+import { AppleScreenTimeBridge } from '@/services/AppleScreenTimeBridge';
 
 const REDUCTION_OPTIONS = [1, 2, 5, 10];
 
@@ -187,6 +188,25 @@ export default function SettingsScreen() {
                   <Shield size={20} color="#34d399" />
                   <Text style={[styles.actionButtonText, styles.permissionButtonText]}>Enable Screen Time Access</Text>
                 </TouchableOpacity>
+              )}
+              {AppleScreenTimeBridge.isSupported() && (
+                <>
+                  <TouchableOpacity style={styles.actionButton} onPress={async () => {
+                    const ok = await AppleScreenTimeBridge.presentActivityPicker();
+                    Alert.alert(ok ? 'Selection Saved' : 'Selection Canceled', ok ? 'Your chosen apps/categories will be observed.' : 'No changes made.');
+                  }}>
+                    <Smartphone size={20} color="#60a5fa" />
+                    <Text style={styles.actionButtonText}>Choose Apps to Track</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={styles.actionButton} onPress={async () => {
+                    const ok = await AppleScreenTimeBridge.startObservations();
+                    Alert.alert(ok ? 'Tracking Enabled' : 'Unable to Start', ok ? 'Observations are scheduled in the background.' : 'Please try again.');
+                  }}>
+                    <Shield size={20} color="#34d399" />
+                    <Text style={styles.actionButtonText}>Start Background Tracking</Text>
+                  </TouchableOpacity>
+                </>
               )}
               <TouchableOpacity style={styles.actionButton} onPress={openSystemSettings}>
                 <Smartphone size={20} color="#60a5fa" />
