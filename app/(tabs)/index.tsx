@@ -233,16 +233,7 @@ export default function HomeScreen() {
     
     if (newStreakAchievements.length > 0 || newReductionAchievements.length > 0) {
       await loadAchievements();
-      
-      // Show achievement notification
-      const allNew = [...newStreakAchievements, ...newReductionAchievements];
-      if (allNew.length > 0) {
-        Alert.alert(
-          '🏆 Achievement Unlocked!',
-          `You've earned: ${allNew.map(a => a.title).join(', ')}`,
-          [{ text: 'View Achievements', onPress: () => setShowAchievements(true) }]
-        );
-      }
+      // No popup on app open; achievements are visible in the Achievements quick stat
     }
   };
 

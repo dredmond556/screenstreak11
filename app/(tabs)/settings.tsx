@@ -5,6 +5,7 @@ import { Target, Trash2, Info, Smartphone, TriangleAlert as AlertTriangle, Shiel
 import { ScreenTimeService } from '@/services/ScreenTimeService';
 import { AppleScreenTimeBridge } from '@/services/AppleScreenTimeBridge';
 import { NotificationService } from '@/services/NotificationService';
+import * as LinkingExpo from 'expo-linking';
 
 const REDUCTION_OPTIONS = [1, 2, 5, 10];
 
@@ -261,25 +262,6 @@ export default function SettingsScreen() {
                   <Text style={[styles.actionButtonText, styles.permissionButtonText]}>Enable Screen Time Access</Text>
                 </TouchableOpacity>
               )}
-              {AppleScreenTimeBridge.isSupported() && (
-                <>
-                  <TouchableOpacity style={styles.actionButton} onPress={async () => {
-                    const ok = await AppleScreenTimeBridge.presentActivityPicker();
-                    Alert.alert(ok ? 'Selection Saved' : 'Selection Canceled', ok ? 'Your chosen apps/categories will be observed.' : 'No changes made.');
-                  }}>
-                    <Smartphone size={20} color="#60a5fa" />
-                    <Text style={styles.actionButtonText}>Choose Apps to Track</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={styles.actionButton} onPress={async () => {
-                    const ok = await AppleScreenTimeBridge.startObservations();
-                    Alert.alert(ok ? 'Tracking Enabled' : 'Unable to Start', ok ? 'Observations are scheduled in the background.' : 'Please try again.');
-                  }}>
-                    <Shield size={20} color="#34d399" />
-                    <Text style={styles.actionButtonText}>Start Background Tracking</Text>
-                  </TouchableOpacity>
-                </>
-              )}
               <TouchableOpacity style={styles.actionButton} onPress={openSystemSettings}>
                 <Smartphone size={20} color="#60a5fa" />
                 <Text style={styles.actionButtonText}>Open iOS Settings</Text>
@@ -335,9 +317,21 @@ export default function SettingsScreen() {
         <View style={styles.section}>
           <View style={styles.disclaimerCard}>
             <Text style={styles.disclaimerText}>
-              ⚠️ <Text style={styles.disclaimerBold}>Health Notice:</Text> ScreenStreak helps reduce screen time through self-discipline. If you experience withdrawal symptoms that interfere with daily life, consult a healthcare professional.
+              ⚠️ <Text style={styles.disclaimerBold}>Important:</Text> The sole goal of ScreenStreak is to help you reduce screen time and free up your day. It is not a mental health app. If you experience intense withdrawal symptoms from using your phone less, please contact a qualified health professional.
             </Text>
           </View>
+        </View>
+
+        {/* Contact Us */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Contact Us</Text>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => Linking.openURL('mailto:screenstreak@gmail.com?subject=ScreenStreak%20Support')}
+          >
+            <Smartphone size={20} color="#60a5fa" />
+            <Text style={styles.actionButtonText}>Email screenstreak@gmail.com</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>

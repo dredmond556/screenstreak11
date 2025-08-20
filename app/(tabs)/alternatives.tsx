@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { 
   Dumbbell, 
@@ -163,27 +163,23 @@ export default function AlternativesScreen() {
   const rotated = [...activities.slice(start), ...activities.slice(0, start)];
   const visible = rotated.slice(0, half);
   const openResourceLink = (activity: string) => {
-    const urls: { [key: string]: string } = {
-      exercise: 'https://www.youtube.com/results?search_query=beginner+workout+routines',
-      reading: 'https://www.goodreads.com/',
-      meditation: 'https://www.headspace.com/',
-      art: 'https://www.youtube.com/results?search_query=beginner+art+tutorials',
-      social: 'https://www.meetup.com/',
-      gardening: 'https://www.almanac.com/gardening',
-      music: 'https://www.youtube.com/results?search_query=learn+instrument+beginner',
-      cooking: 'https://www.allrecipes.com/',
-      journaling: 'https://www.youtube.com/results?search_query=journaling+for+beginners',
-      puzzles: 'https://www.puzzle-warehouse.com/',
-      walking: 'https://www.alltrails.com/',
-      volunteering: 'https://www.volunteermatch.org/'
+    // Replace web links with offline prompts to avoid more time online
+    const suggestions: { [key: string]: string } = {
+      exercise: 'Pick a 10-minute bodyweight routine you can do right now: squats, push-ups, planks, lunges.',
+      reading: 'Grab any book or a printed article for 10–20 minutes. Set a timer and start.',
+      meditation: 'Sit comfortably, close your eyes, and count breaths for 5 minutes. Inhale 4, exhale 4.',
+      art: 'Take paper and pen. Sketch your room corner for 10 minutes—no judgment, just lines.',
+      social: 'Call or text a friend to meet for a short walk. Put the phone away during the walk.',
+      gardening: 'Spend 10 minutes tending plants or stepping outside to notice nature details.',
+      music: 'Practice a simple scale or hum along to a song for 10 minutes—no screens needed.',
+      cooking: 'Make a quick snack from your pantry. 10-minute prep, no recipe needed.',
+      journaling: 'Write one page about your day or a goal. Pen and paper.',
+      puzzles: 'Do a crossword or sudoku from a book, or a physical puzzle you own.',
+      walking: 'Step outside for a 10–20 minute walk. No headphones, just observe.',
+      volunteering: 'Pick a small act: tidy a shared space, donate an item, text to help someone.'
     };
-
-    const url = urls[activity];
-    if (url) {
-      Linking.openURL(url).catch(() => {
-        Alert.alert('Error', 'Unable to open link');
-      });
-    }
+    const msg = suggestions[activity] || 'Pick a small, offline action you can do right now for 10–20 minutes.';
+    Alert.alert('Try this offline:', msg);
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -297,6 +293,7 @@ const styles = StyleSheet.create({
   activitiesContainer: {
     paddingHorizontal: 24,
     paddingTop: 24,
+    paddingBottom: 24,
   },
   suggestionsSection: {
     paddingHorizontal: 0,
