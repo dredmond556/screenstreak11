@@ -11,7 +11,7 @@ import { NotificationService } from '@/services/NotificationService';
 import { AchievementService, Achievement } from '@/services/AchievementService';
 import { CustomGoalService, CustomGoal } from '@/services/CustomGoalService';
 import { StreakFreezeService } from '@/services/StreakFreezeService';
-import * as Haptics from 'expo-haptics';
+// Haptics temporarily disabled to avoid dependency resolution issues on SDK 53
 
 export default function HomeScreen() {
   const [todayUsage, setTodayUsage] = useState(0);
@@ -130,7 +130,7 @@ export default function HomeScreen() {
     setManualTime('');
     setShowManualEntry(false);
     loadData();
-    try { await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } catch {}
+    // Haptics disabled
     Alert.alert('Success', 'Your screen time has been updated.');
   };
 
@@ -373,11 +373,11 @@ export default function HomeScreen() {
             onPress={async () => {
               const ok = await StreakFreezeService.useFreezeForToday();
               if (ok) {
-                try { await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } catch {}
+                // Haptics disabled
                 Alert.alert('Freeze Used', 'Today will not break your streak. Limited passes per month.');
                 loadData();
               } else {
-                try { await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error); } catch {}
+                // Haptics disabled
                 Alert.alert('No Passes Left', 'You have used all freeze passes for this month.');
               }
             }}
