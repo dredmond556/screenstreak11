@@ -7,6 +7,7 @@ interface NotificationSettings {
   streakCelebrations: boolean;
   goalWarnings: boolean;
   motivationalCheckins: boolean;
+  weeklyDigest: boolean;
   reminderTime: string; // HH:MM format
 }
 
@@ -35,6 +36,7 @@ export class NotificationService {
         streakCelebrations: true,
         goalWarnings: true,
         motivationalCheckins: true,
+        weeklyDigest: true,
         reminderTime: '20:00'
       };
     } catch (error) {
@@ -44,6 +46,7 @@ export class NotificationService {
         streakCelebrations: true,
         goalWarnings: true,
         motivationalCheckins: true,
+        weeklyDigest: true,
         reminderTime: '20:00'
       };
     }
@@ -62,6 +65,12 @@ export class NotificationService {
     const settings = await this.getSettings();
     if (!settings.dailyReminders) return;
     console.log('Daily reminder scheduled');
+  }
+
+  static async scheduleWeeklyDigest(): Promise<void> {
+    const settings = await this.getSettings();
+    if (!settings.weeklyDigest) return;
+    console.log('Weekly digest scheduled for Sunday 6pm');
   }
 
   static async scheduleStreakCelebration(streakDays: number): Promise<void> {
@@ -85,6 +94,7 @@ export class NotificationService {
   static async rescheduleNotifications(): Promise<void> {
     await this.scheduleDailyReminder();
     await this.scheduleMotivationalCheckin();
+    await this.scheduleWeeklyDigest();
   }
 
   static async cancelAllNotifications(): Promise<void> {

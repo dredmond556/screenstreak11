@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import { AppleScreenTimeBridge } from './AppleScreenTimeBridge';
+import { StreakFreezeService } from './StreakFreezeService';
 
 interface ScreenTimeData {
   totalScreenTime: number;
@@ -238,7 +239,9 @@ export class ScreenTimeService {
     
     let streak = 0;
     for (let i = data.length - 1; i >= 0; i--) {
-      if (data[i].usage <= goal) {
+      const dateIso = data[i].date;
+      const frozen = await StreakFreezeService.isDateFrozen(dateIso);
+      if (data[i].usage <= goal || frozen) {
         streak++;
       } else {
         break;

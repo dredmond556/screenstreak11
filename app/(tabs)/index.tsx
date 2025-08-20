@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert, Linking, Modal, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { Target, TrendingDown, Award, CreditCard as Edit3, Calendar, MessageCircle, Smartphone, ChevronDown, Shield, Bell, ChartBar as BarChart3, Plus, Zap } from 'lucide-react-native';
+import { Target, TrendingDown, Award, CreditCard as Edit3, Calendar, MessageCircle, Smartphone, ChevronDown, Shield, Bell, ChartBar as BarChart3, Plus, Zap, Snowflake } from 'lucide-react-native';
 import { CircularProgress } from '@/components/CircularProgress';
 import { AchievementModal } from '@/components/AchievementModal';
 import { CustomGoalModal } from '@/components/CustomGoalModal';
@@ -10,6 +10,8 @@ import { ScreenTimeService } from '@/services/ScreenTimeService';
 import { NotificationService } from '@/services/NotificationService';
 import { AchievementService, Achievement } from '@/services/AchievementService';
 import { CustomGoalService, CustomGoal } from '@/services/CustomGoalService';
+import { StreakFreezeService } from '@/services/StreakFreezeService';
+import * as Haptics from 'expo-haptics';
 
 export default function HomeScreen() {
   const [todayUsage, setTodayUsage] = useState(0);
@@ -128,6 +130,7 @@ export default function HomeScreen() {
     setManualTime('');
     setShowManualEntry(false);
     loadData();
+    try { await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } catch {}
     Alert.alert('Success', 'Your screen time has been updated.');
   };
 
@@ -363,6 +366,24 @@ export default function HomeScreen() {
           >
             <MessageCircle size={20} color="#60a5fa" />
             <Text style={styles.actionButtonText}>Share Progress with a Friend</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={async () => {
+              const ok = await StreakFreezeService.useFreezeForToday();
+              if (ok) {
+                try { await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } catch {}
+                Alert.alert('Freeze Used', 'Today will not break your streak. Limited passes per month.');
+                loadData();
+              } else {
+                try { await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error); } catch {}
+                Alert.alert('No Passes Left', 'You have used all freeze passes for this month.');
+              }
+            }}
+          >
+            <Snowflake size={20} color="#60a5fa" />
+            <Text style={styles.actionButtonText}>Use Streak Freeze</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
