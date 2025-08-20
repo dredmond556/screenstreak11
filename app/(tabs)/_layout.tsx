@@ -1,5 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Smartphone, ChartBar as BarChart3, Settings, Lightbulb } from 'lucide-react-native';
+import { BlurView } from 'expo-blur';
+import { StyleSheet } from 'react-native';
 
 export default function TabLayout() {
   return (
@@ -7,20 +9,17 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#1f2937',
-          borderTopWidth: 0,
+          backgroundColor: 'rgba(17, 24, 39, 0.6)',
+          borderTopWidth: 1,
+          borderTopColor: 'rgba(255,255,255,0.08)',
           paddingBottom: 8,
           paddingTop: 8,
-          height: 80,
-          shadowColor: '#000',
-          shadowOffset: {
-            width: 0,
-            height: -2,
-          },
-          shadowOpacity: 0.1,
-          shadowRadius: 8,
-          elevation: 8,
+          height: 68,
+          position: 'absolute',
         },
+        tabBarBackground: () => (
+          <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill} />
+        ),
         tabBarActiveTintColor: '#60a5fa',
         tabBarInactiveTintColor: '#9ca3af',
         tabBarLabelStyle: {

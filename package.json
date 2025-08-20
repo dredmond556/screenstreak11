@@ -9,7 +9,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "build": "expo export -p web",
-    "build:web": "expo export -p web"
+    "build:web": "expo export -p web",
+    "publish": "expo publish",
+    "eas:build:ios": "eas build -p ios --profile production",
+    "eas:submit:ios": "eas submit -p ios --latest"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
@@ -25,6 +28,7 @@
     "expo-router": "~3.5.23",
     "expo-sharing": "~12.0.1",
     "expo-status-bar": "~1.12.1",
+    "expo-blur": "~13.0.2",
     "expo-system-ui": "~3.0.7",
     "lucide-react-native": "^0.539.0",
     "react": "18.2.0",
@@ -38,7 +42,8 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~18.2.45",
-    "typescript": "~5.3.3"
+    "typescript": "~5.3.3",
+    "eas-cli": "^13.7.0"
   },
   "private": true
 }
