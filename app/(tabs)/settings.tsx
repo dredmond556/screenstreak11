@@ -313,6 +313,21 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        {/* Safety Reminders */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>🛡️ Safety Reminders</Text>
+          <View style={styles.tipCard}>
+            <Text style={styles.tipText}>
+              <Text style={styles.tipBold}>No Phone While Driving:</Text> Do not look at your phone while driving. If you need directions, set them before you go and use hands‑free navigation.
+            </Text>
+          </View>
+          <View style={styles.tipCard}>
+            <Text style={styles.tipText}>
+              <Text style={styles.tipBold}>Pre‑Sleep Wind‑Down:</Text> Avoid screens for at least 1 hour before bedtime to help your brain relax and sleep better.
+            </Text>
+          </View>
+        </View>
+
         {/* Health Disclaimer */}
         <View style={styles.section}>
           <View style={styles.disclaimerCard}>
