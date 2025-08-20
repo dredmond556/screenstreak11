@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform, Linking } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform, Linking, Switch } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Target, Trash2, Info, Smartphone, TriangleAlert as AlertTriangle, Shield } from 'lucide-react-native';
 import { ScreenTimeService } from '@/services/ScreenTimeService';
 import { AppleScreenTimeBridge } from '@/services/AppleScreenTimeBridge';
+import { NotificationService } from '@/services/NotificationService';
 
 const REDUCTION_OPTIONS = [1, 2, 5, 10];
 
@@ -12,6 +13,14 @@ export default function SettingsScreen() {
   const [weeklyAverage, setWeeklyAverage] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [hasScreenTimePermission, setHasScreenTimePermission] = useState(false);
+  const [notifSettings, setNotifSettings] = useState({
+    dailyReminders: true,
+    streakCelebrations: true,
+    goalWarnings: true,
+    motivationalCheckins: true,
+    weeklyDigest: true,
+    reminderTime: '20:00',
+  });
 
   useEffect(() => {
     loadSettings();
@@ -22,10 +31,12 @@ export default function SettingsScreen() {
     const reduction = await ScreenTimeService.getGoalReduction();
     const average = await ScreenTimeService.getWeeklyAverage();
     const streak = await ScreenTimeService.getCurrentStreak();
+    const n = await NotificationService.getSettings();
     
     setGoalReduction(reduction);
     setWeeklyAverage(average);
     setCurrentStreak(streak);
+    setNotifSettings(n);
   };
 
   const handleReductionChange = async (minutes: number) => {
@@ -35,6 +46,12 @@ export default function SettingsScreen() {
       'Goal Updated',
       `Your daily reduction goal has been set to ${minutes} minutes less than your weekly average.`
     );
+  };
+
+  const updateNotif = async (key: keyof typeof notifSettings, value: boolean) => {
+    const next = { ...notifSettings, [key]: value };
+    setNotifSettings(next);
+    await NotificationService.updateSettings(next as any);
   };
 
   const checkScreenTimePermission = async () => {
@@ -169,6 +186,61 @@ export default function SettingsScreen() {
               <Text style={styles.summaryValue}>{formatTime(weeklyAverage)}</Text>
               <Text style={styles.summaryLabel}>Weekly Average</Text>
             </View>
+          </View>
+        </View>
+
+        {/* Notifications */}
+        <View className="notifications" style={styles.section}>
+          <Text style={styles.sectionTitle}>Notifications</Text>
+
+          <View style={styles.toggleRow}>
+            <Text style={styles.toggleLabel}>Daily Reminders</Text>
+            <Switch
+              value={notifSettings.dailyReminders}
+              onValueChange={(v) => updateNotif('dailyReminders', v)}
+              trackColor={{ false: '#374151', true: '#60a5fa' }}
+              thumbColor={'#f9fafb'}
+            />
+          </View>
+
+          <View style={styles.toggleRow}>
+            <Text style={styles.toggleLabel}>Streak Celebrations</Text>
+            <Switch
+              value={notifSettings.streakCelebrations}
+              onValueChange={(v) => updateNotif('streakCelebrations', v)}
+              trackColor={{ false: '#374151', true: '#60a5fa' }}
+              thumbColor={'#f9fafb'}
+            />
+          </View>
+
+          <View style={styles.toggleRow}>
+            <Text style={styles.toggleLabel}>Goal Warnings</Text>
+            <Switch
+              value={notifSettings.goalWarnings}
+              onValueChange={(v) => updateNotif('goalWarnings', v)}
+              trackColor={{ false: '#374151', true: '#60a5fa' }}
+              thumbColor={'#f9fafb'}
+            />
+          </View>
+
+          <View style={styles.toggleRow}>
+            <Text style={styles.toggleLabel}>Motivational Check-ins</Text>
+            <Switch
+              value={notifSettings.motivationalCheckins}
+              onValueChange={(v) => updateNotif('motivationalCheckins', v)}
+              trackColor={{ false: '#374151', true: '#60a5fa' }}
+              thumbColor={'#f9fafb'}
+            />
+          </View>
+
+          <View style={styles.toggleRow}>
+            <Text style={styles.toggleLabel}>Weekly Digest</Text>
+            <Switch
+              value={notifSettings.weeklyDigest}
+              onValueChange={(v) => updateNotif('weeklyDigest', v)}
+              trackColor={{ false: '#374151', true: '#60a5fa' }}
+              thumbColor={'#f9fafb'}
+            />
           </View>
         </View>
 
@@ -489,5 +561,20 @@ const styles = StyleSheet.create({
   disclaimerBold: {
     fontWeight: '700',
     color: '#fef2f2',
+  },
+  toggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#1f2937',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginBottom: 10,
+  },
+  toggleLabel: {
+    color: '#f9fafb',
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
