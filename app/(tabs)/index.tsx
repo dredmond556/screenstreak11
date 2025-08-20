@@ -6,7 +6,6 @@ import { CircularProgress } from '@/components/CircularProgress';
 import { AchievementModal } from '@/components/AchievementModal';
 import { CustomGoalModal } from '@/components/CustomGoalModal';
 import { InsightsModal } from '@/components/InsightsModal';
-import { SuggestionsPanel } from '@/components/SuggestionsPanel';
 import { ScreenTimeService } from '@/services/ScreenTimeService';
 import { NotificationService } from '@/services/NotificationService';
 import { AchievementService, Achievement } from '@/services/AchievementService';
@@ -414,10 +413,6 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Senay's Suggestions */}
-        <View style={styles.suggestionsSection}>
-          <SuggestionsPanel />
-        </View>
 
         {/* Reduction Goal Modal */}
         <Modal
@@ -743,10 +738,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     marginBottom: 24,
     gap: 12,
-  },
-  suggestionsSection: {
-    marginTop: 4,
-    marginBottom: 24,
   },
   quickStat: {
     flex: 1,
