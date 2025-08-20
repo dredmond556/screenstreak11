@@ -12,8 +12,11 @@ import { AchievementService, Achievement } from '@/services/AchievementService';
 import { CustomGoalService, CustomGoal } from '@/services/CustomGoalService';
 import { StreakFreezeService } from '@/services/StreakFreezeService';
 // Haptics temporarily disabled to avoid dependency resolution issues on SDK 53
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SuggestionsPanel } from '@/components/SuggestionsPanel';
 
 export default function HomeScreen() {
+  const insets = useSafeAreaInsets();
   const [todayUsage, setTodayUsage] = useState(0);
   const [weeklyAverage, setWeeklyAverage] = useState(0);
   const [dailyGoal, setDailyGoal] = useState(0);
@@ -241,7 +244,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <StatusBar style="light" />
       <ScrollView 
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }]}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
@@ -409,7 +412,7 @@ export default function HomeScreen() {
           <TouchableOpacity style={styles.quickStat} onPress={handleAchievementPress}>
             <Award size={16} color="#fbbf24" />
             <Text style={styles.quickStatValue}>{achievements.filter(a => a.unlockedAt).length}</Text>
-            <Text style={styles.quickStatLabel}>Achievements</Text>
+            <Text style={styles.quickStatLabel} numberOfLines={1}>Achievements</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.quickStat} onPress={() => setShowInsights(true)}>
@@ -423,6 +426,11 @@ export default function HomeScreen() {
             <Text style={styles.quickStatValue}>{customGoals.length}</Text>
             <Text style={styles.quickStatLabel}>Custom Goals</Text>
           </TouchableOpacity>
+        </View>
+
+        {/* Senay's Suggestions on Home */}
+        <View style={{ paddingHorizontal: 24, marginBottom: 24 }}>
+          <SuggestionsPanel />
         </View>
 
 

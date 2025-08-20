@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Linking } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { 
   Dumbbell, 
@@ -163,23 +163,27 @@ export default function AlternativesScreen() {
   const rotated = [...activities.slice(start), ...activities.slice(0, start)];
   const visible = rotated.slice(0, half);
   const openResourceLink = (activity: string) => {
-    // Replace web links with offline prompts to avoid more time online
-    const suggestions: { [key: string]: string } = {
-      exercise: 'Pick a 10-minute bodyweight routine you can do right now: squats, push-ups, planks, lunges.',
-      reading: 'Grab any book or a printed article for 10–20 minutes. Set a timer and start.',
-      meditation: 'Sit comfortably, close your eyes, and count breaths for 5 minutes. Inhale 4, exhale 4.',
-      art: 'Take paper and pen. Sketch your room corner for 10 minutes—no judgment, just lines.',
-      social: 'Call or text a friend to meet for a short walk. Put the phone away during the walk.',
-      gardening: 'Spend 10 minutes tending plants or stepping outside to notice nature details.',
-      music: 'Practice a simple scale or hum along to a song for 10 minutes—no screens needed.',
-      cooking: 'Make a quick snack from your pantry. 10-minute prep, no recipe needed.',
-      journaling: 'Write one page about your day or a goal. Pen and paper.',
-      puzzles: 'Do a crossword or sudoku from a book, or a physical puzzle you own.',
-      walking: 'Step outside for a 10–20 minute walk. No headphones, just observe.',
-      volunteering: 'Pick a small act: tidy a shared space, donate an item, text to help someone.'
+    // Curated low-distraction resources (books, printable guides, activity generators)
+    const urls: { [key: string]: string } = {
+      exercise: 'https://edhub.ama-assn.org/sites/default/files/media/2020-04/20-0357_ama_howtoguide_homeworkouts_v19.pdf',
+      reading: 'https://www.gutenberg.org/ebooks/search/?sort_order=downloads',
+      meditation: 'https://ggia.berkeley.edu/practice/breath_counting',
+      art: 'https://drawabox.com/lesson/1',
+      social: 'https://www.theminimalists.com/podcast/#starter',
+      gardening: 'https://extension.umn.edu/yard-and-garden',
+      music: 'https://www.musictheory.net/lessons',
+      cooking: 'https://www.chelseawinter.co.nz/wp-content/uploads/2015/09/Kitchen-basics-printable-1.pdf',
+      journaling: 'https://jamesclear.com/one-sentence-journal',
+      puzzles: 'https://krazydad.com/sudoku/',
+      walking: 'https://www.nrpa.org/our-work/Three-Pillars/health-wellness/walk-with-ease/',
+      volunteering: 'https://www.idealist.org/en/volunteer-opportunities'
     };
-    const msg = suggestions[activity] || 'Pick a small, offline action you can do right now for 10–20 minutes.';
-    Alert.alert('Try this offline:', msg);
+    const url = urls[activity];
+    if (url) {
+      Linking.openURL(url).catch(() => Alert.alert('Error', 'Unable to open link'));
+    } else {
+      Alert.alert('Try this:', 'Pick a small, offline action you can do right now for 10–20 minutes.');
+    }
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -293,7 +297,7 @@ const styles = StyleSheet.create({
   activitiesContainer: {
     paddingHorizontal: 24,
     paddingTop: 24,
-    paddingBottom: 24,
+    paddingBottom: 120,
   },
   suggestionsSection: {
     paddingHorizontal: 0,
