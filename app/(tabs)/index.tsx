@@ -413,7 +413,7 @@ export default function HomeScreen() {
           )}
         </View>
 
-        {/* Quick Stats Row */
+        {/* Quick Stats Row */}
         <View style={styles.quickStatsRow}>
           <TouchableOpacity style={styles.quickStat} onPress={handleAchievementPress}>
             <Award size={16} color="#fbbf24" />
