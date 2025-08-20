@@ -256,6 +256,9 @@ export default function HomeScreen() {
           <Text style={styles.headerSubtitle}>
             Taper off your Smartphone addiction
           </Text>
+          <Text style={styles.headerGoal}>
+            Our goal: Gradually free up your time by small increments each day using self‑discipline. No app blocks — just you getting your time back.
+          </Text>
         </View>
 
         {/* Main Progress Circle */}
@@ -515,6 +518,13 @@ const styles = StyleSheet.create({
     color: '#9ca3af',
     fontWeight: '500',
     textAlign: 'center',
+  },
+  headerGoal: {
+    fontSize: 14,
+    color: '#9ca3af',
+    fontWeight: '500',
+    textAlign: 'center',
+    marginTop: 6,
   },
   progressSection: {
     alignItems: 'center',
