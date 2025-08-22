@@ -162,20 +162,20 @@ export default function AlternativesScreen() {
   const rotated = [...activities.slice(start), ...activities.slice(0, start)];
   const visible = rotated.slice(0, half);
   const openResourceLink = (activity: string) => {
-    // Curated low-distraction resources (books, printable guides, activity generators)
+    // Curated low-distraction resources (nonprofit/government preferred)
     const urls: { [key: string]: string } = {
-      exercise: 'https://edhub.ama-assn.org/sites/default/files/media/2020-04/20-0357_ama_howtoguide_homeworkouts_v19.pdf',
-      reading: 'https://www.gutenberg.org/ebooks/search/?sort_order=downloads',
-      meditation: 'https://ggia.berkeley.edu/practice/breath_counting',
-      art: 'https://drawabox.com/lesson/1',
-      social: 'https://www.theminimalists.com/podcast/#starter',
+      exercise: 'https://www.niams.nih.gov/health-topics/physical-activity',
+      reading: 'https://www.loc.gov/collections/',
+      meditation: 'https://www.nccih.nih.gov/health/meditation-in-depth',
+      art: 'https://www.nga.gov/education/kids.html',
+      social: 'https://www.cdc.gov/aging/publications/features/lonely-older-adults.html',
       gardening: 'https://extension.umn.edu/yard-and-garden',
-      music: 'https://www.musictheory.net/lessons',
-      cooking: 'https://www.chelseawinter.co.nz/wp-content/uploads/2015/09/Kitchen-basics-printable-1.pdf',
-      journaling: 'https://jamesclear.com/one-sentence-journal',
-      puzzles: 'https://krazydad.com/sudoku/',
-      walking: 'https://www.nrpa.org/our-work/Three-Pillars/health-wellness/walk-with-ease/',
-      volunteering: 'https://www.idealist.org/en/volunteer-opportunities'
+      music: 'https://www.metopera.org/season/on-demand/',
+      cooking: 'https://www.nhlbi.nih.gov/health/educational/lose_wt/eat/calories.htm',
+      journaling: 'https://www.va.gov/WHOLEHEALTHLIBRARY/tools/journaling.asp',
+      puzzles: 'https://www.nps.gov/subjects/kidsyouth/online-activities.htm',
+      walking: 'https://www.cdc.gov/physicalactivity/basics/adults/index.htm',
+      volunteering: 'https://www.nps.gov/getinvolved/volunteer.htm',
     };
     const url = urls[activity];
     if (url) {
