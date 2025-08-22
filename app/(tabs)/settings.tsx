@@ -175,20 +175,7 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        {/* Progress Summary */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Progress Summary</Text>
-          <View style={styles.summaryGrid}>
-            <View style={styles.summaryCard}>
-              <Text style={styles.summaryValue}>{currentStreak}</Text>
-              <Text style={styles.summaryLabel}>Day Streak</Text>
-            </View>
-            <View style={styles.summaryCard}>
-              <Text style={styles.summaryValue}>{formatTime(weeklyAverage)}</Text>
-              <Text style={styles.summaryLabel}>Weekly Average</Text>
-            </View>
-          </View>
-        </View>
+        {/* Progress Summary removed for simplicity */}
 
         {/* Notifications */}
         <View className="notifications" style={styles.section}>
@@ -344,8 +331,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#111827',
   },
   scrollContent: {
-    paddingTop: 16,
-    paddingBottom: 32,
+    paddingTop: 20,
+    paddingBottom: 160,
   },
   header: {
     paddingHorizontal: 24,

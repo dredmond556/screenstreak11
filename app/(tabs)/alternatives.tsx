@@ -162,19 +162,19 @@ export default function AlternativesScreen() {
   const rotated = [...activities.slice(start), ...activities.slice(0, start)];
   const visible = rotated.slice(0, half);
   const openResourceLink = (activity: string) => {
-    // Curated low-distraction resources (nonprofit/government preferred)
+    // Free educational reading/resources (books/nonprofit)
     const urls: { [key: string]: string } = {
-      exercise: 'https://www.niams.nih.gov/health-topics/physical-activity',
-      reading: 'https://www.loc.gov/collections/',
-      meditation: 'https://www.nccih.nih.gov/health/meditation-in-depth',
-      art: 'https://www.nga.gov/education/kids.html',
-      social: 'https://www.cdc.gov/aging/publications/features/lonely-older-adults.html',
+      exercise: 'https://www.hhs.gov/fitness/resource-center/index.html',
+      reading: 'https://www.gutenberg.org/ebooks/search/?sort_order=downloads',
+      meditation: 'https://ggia.berkeley.edu/practice',
+      art: 'https://www.metmuseum.org/art/online-features/metkids/',
+      social: 'https://www.mhanational.org/finding-help',
       gardening: 'https://extension.umn.edu/yard-and-garden',
-      music: 'https://www.metopera.org/season/on-demand/',
-      cooking: 'https://www.nhlbi.nih.gov/health/educational/lose_wt/eat/calories.htm',
-      journaling: 'https://www.va.gov/WHOLEHEALTHLIBRARY/tools/journaling.asp',
-      puzzles: 'https://www.nps.gov/subjects/kidsyouth/online-activities.htm',
-      walking: 'https://www.cdc.gov/physicalactivity/basics/adults/index.htm',
+      music: 'https://musopen.org/music/',
+      cooking: 'https://snaped.fns.usda.gov/nutrition-education/recipes',
+      journaling: 'https://www.opencollege.edu.au/informed/journaling/',
+      puzzles: 'https://www.puzzles.ca/',
+      walking: 'https://www.cdc.gov/physicalactivity/walking/index.htm',
       volunteering: 'https://www.nps.gov/getinvolved/volunteer.htm',
     };
     const url = urls[activity];
@@ -202,7 +202,7 @@ export default function AlternativesScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: 28 }]}>
           <Text style={styles.headerTitle}>Screen-Free Activities</Text>
           <Text style={styles.headerSubtitle}>
             Discover meaningful alternatives to screen time
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   activitiesContainer: {
     paddingHorizontal: 24,
     paddingTop: 24,
-    paddingBottom: 120,
+    paddingBottom: 160,
   },
   suggestionsSection: {
     paddingHorizontal: 0,

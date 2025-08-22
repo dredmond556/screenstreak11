@@ -244,11 +244,11 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <StatusBar style="light" />
       <ScrollView 
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 140 }]}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
           <View style={styles.headerTitleContainer}>
             <Smartphone size={32} color="#60a5fa" />
             <Text style={styles.headerTitle}>ScreenStreak</Text>

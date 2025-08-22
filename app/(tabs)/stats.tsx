@@ -66,7 +66,7 @@ export default function StatsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: 28 }]}>
           <View style={styles.headerTitleContainer}>
             <Smartphone size={28} color="#60a5fa" />
             <Text style={styles.headerTitle}>Your ScreenStreak</Text>
@@ -168,8 +168,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingTop: 16,
-    paddingBottom: 32,
+    paddingTop: 20,
+    paddingBottom: 160,
   },
   header: {
     paddingHorizontal: 24,
