@@ -257,7 +257,7 @@ export default function HomeScreen() {
             Taper off your Smartphone addiction
           </Text>
           <Text style={styles.headerGoal}>
-            Our goal: Gradually free up your time by small increments each day using self‑discipline. No app blocks — just you getting your time back.
+            Gradually free up your time — small daily wins through self‑discipline. No app blocks.
           </Text>
         </View>
 
@@ -509,11 +509,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   headerGoal: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#9ca3af',
     fontWeight: '500',
     textAlign: 'center',
-    marginTop: 6,
+    marginTop: 8,
+    lineHeight: 20,
   },
   progressSection: {
     alignItems: 'center',
