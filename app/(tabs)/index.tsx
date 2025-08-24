@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert, Linking, Modal, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Target, TrendingDown, Award, CreditCard as Edit3, Calendar, MessageCircle, Smartphone, ChevronDown, Shield, Bell, ChartBar as BarChart3, Plus, Zap } from 'lucide-react-native';
@@ -10,6 +10,9 @@ import { ScreenTimeService } from '@/services/ScreenTimeService';
 import { NotificationService } from '@/services/NotificationService';
 import { AchievementService, Achievement } from '@/services/AchievementService';
 import { CustomGoalService, CustomGoal } from '@/services/CustomGoalService';
+import ViewShot from 'react-native-view-shot';
+import ShareCard from '@/components/ShareCard';
+import * as Sharing from 'expo-sharing';
 
 export default function HomeScreen() {
   const [todayUsage, setTodayUsage] = useState(0);
@@ -28,6 +31,8 @@ export default function HomeScreen() {
   const [showInsights, setShowInsights] = useState(false);
   const [customGoals, setCustomGoals] = useState<CustomGoal[]>([]);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [isShareModalVisible, setIsShareModalVisible] = useState(false);
+  const viewShotRef = useRef<any>(null);
 
   useEffect(() => {
     loadData();
@@ -193,13 +198,57 @@ export default function HomeScreen() {
     }
   };
 
-  const shareProgressWithFriend = () => {
-    const message = `📱 ScreenStreak Progress Update!\n\n🧠 Current Streak: ${currentStreak} days\n📊 Daily Goal: ${formatTime(dailyGoal)}\n📈 Today's Usage: ${formatTime(todayUsage)}\n\nTapering off smartphone addiction one day at a time! 💪`;
-    const url = `sms:?body=${encodeURIComponent(message)}`;
-    Linking.openURL(url).catch(() => {
-      Alert.alert('Error', 'Unable to open messaging app');
-    });
+  const shareProgressWithFriend = async () => {
+    // Fallback to text share on web
+    if (Platform.OS === 'web') {
+      const message = `📱 ScreenStreak Progress Update!\n\n🧠 Current Streak: ${currentStreak} days\n📊 Daily Goal: ${formatTime(dailyGoal)}\n📈 Today's Usage: ${formatTime(todayUsage)}\n\nTapering off smartphone addiction one day at a time! 💪`;
+      const url = `sms:?body=${encodeURIComponent(message)}`;
+      Linking.openURL(url).catch(() => {
+        Alert.alert('Error', 'Unable to open messaging app');
+      });
+      return;
+    }
+
+    // If sharing isn't available, fallback to text SMS
+    const canShare = await Sharing.isAvailableAsync().catch(() => false);
+    if (!canShare) {
+      const message = `📱 ScreenStreak Progress Update!\n\n🧠 Current Streak: ${currentStreak} days\n📊 Daily Goal: ${formatTime(dailyGoal)}\n📈 Today's Usage: ${formatTime(todayUsage)}\n\nTapering off smartphone addiction one day at a time! 💪`;
+      const url = `sms:?body=${encodeURIComponent(message)}`;
+      Linking.openURL(url).catch(() => {
+        Alert.alert('Error', 'Unable to open messaging app');
+      });
+      return;
+    }
+
+    setIsShareModalVisible(true);
   };
+
+  useEffect(() => {
+    if (!isShareModalVisible) return;
+    let cancelled = false;
+    const captureAndShare = async () => {
+      // Allow a short delay for the modal content to render
+      await new Promise(resolve => setTimeout(resolve, 150));
+      try {
+        const uri = await (viewShotRef.current?.capture?.({ format: 'png', quality: 1 }) as Promise<string>);
+        if (!uri) throw new Error('Capture failed');
+        await Sharing.shareAsync(uri, {
+          mimeType: 'image/png',
+          dialogTitle: 'Share your ScreenStreak',
+        });
+      } catch (error) {
+        if (!cancelled) {
+          Alert.alert('Error', 'Unable to generate and share the image.');
+        }
+      } finally {
+        if (!cancelled) setIsShareModalVisible(false);
+      }
+    };
+    captureAndShare();
+    return () => {
+      cancelled = true;
+    };
+  }, [isShareModalVisible]);
 
   const handleReductionChange = async (minutes: number) => {
     await ScreenTimeService.setGoalReduction(minutes);
@@ -456,6 +505,19 @@ export default function HomeScreen() {
           onClose={() => setShowInsights(false)}
         />
       </ScrollView>
+
+      {/* Hidden modal for rendering the share image */}
+      <Modal visible={isShareModalVisible} transparent animationType="fade" onRequestClose={() => setIsShareModalVisible(false)}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', alignItems: 'center', justifyContent: 'center' }}>
+          <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 1, result: 'tmpfile' }}>
+            <ShareCard
+              currentStreak={currentStreak}
+              dailyGoalMinutes={dailyGoal}
+              todayUsageMinutes={todayUsage}
+            />
+          </ViewShot>
+        </View>
+      </Modal>
     </View>
   );
 }
