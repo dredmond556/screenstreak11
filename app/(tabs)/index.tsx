@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert, Linking, Modal, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { Target, TrendingDown, Award, CreditCard as Edit3, Calendar, MessageCircle, Smartphone, ChevronDown, Shield, Bell, ChartBar as BarChart3, Plus, Zap } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Target, TrendingDown, Award, CreditCard as Edit3, Calendar, MessageCircle, Smartphone, ChevronDown, Shield, Bell, ChartBar as BarChart3, Plus, Zap, Cloud, Download, Upload, Heart } from 'lucide-react-native';
 import { CircularProgress } from '@/components/CircularProgress';
 import { AchievementModal } from '@/components/AchievementModal';
 import { CustomGoalModal } from '@/components/CustomGoalModal';
@@ -10,8 +11,10 @@ import { ScreenTimeService } from '@/services/ScreenTimeService';
 import { NotificationService } from '@/services/NotificationService';
 import { AchievementService, Achievement } from '@/services/AchievementService';
 import { CustomGoalService, CustomGoal } from '@/services/CustomGoalService';
+import { CloudSyncService } from '@/services/CloudSyncService';
 
 export default function HomeScreen() {
+  const insets = useSafeAreaInsets();
   const [todayUsage, setTodayUsage] = useState(0);
   const [weeklyAverage, setWeeklyAverage] = useState(0);
   const [dailyGoal, setDailyGoal] = useState(0);
@@ -28,6 +31,7 @@ export default function HomeScreen() {
   const [showInsights, setShowInsights] = useState(false);
   const [customGoals, setCustomGoals] = useState<CustomGoal[]>([]);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [lastBackupDate, setLastBackupDate] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
@@ -35,6 +39,7 @@ export default function HomeScreen() {
     loadAchievements();
     loadCustomGoals();
     checkNotificationPermissions();
+    loadBackupStatus();
     // Update every minute in a real app
     const interval = setInterval(loadData, 60000);
     return () => clearInterval(interval);
@@ -64,6 +69,11 @@ export default function HomeScreen() {
   const loadCustomGoals = async () => {
     const goals = await CustomGoalService.getActiveGoals();
     setCustomGoals(goals);
+  };
+
+  const loadBackupStatus = async () => {
+    const lastBackup = await CloudSyncService.getLastBackupDate();
+    setLastBackupDate(lastBackup);
   };
 
   const checkNotificationPermissions = async () => {
@@ -100,6 +110,35 @@ export default function HomeScreen() {
             }
           }
         }
+      ]
+    );
+  };
+
+  const handleCloudBackup = async () => {
+    try {
+      await CloudSyncService.exportData();
+      loadBackupStatus();
+    } catch (error) {
+      console.error('Cloud backup failed:', error);
+    }
+  };
+
+  const handleCloudRestore = async () => {
+    Alert.alert(
+      'Restore Data',
+      'This will replace your current data with the backup. Are you sure you want to continue?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Restore', style: 'destructive', onPress: async () => {
+          try {
+            await CloudSyncService.importData();
+            loadData();
+            loadAchievements();
+            loadCustomGoals();
+          } catch (error) {
+            console.error('Cloud restore failed:', error);
+          }
+        }}
       ]
     );
   };
@@ -247,11 +286,11 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <StatusBar style="light" />
       <ScrollView 
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 20 }]}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: 20 }]}>
           <View style={styles.headerTitleContainer}>
             <Smartphone size={32} color="#60a5fa" />
             <Text style={styles.headerTitle}>ScreenStreak</Text>
@@ -373,6 +412,28 @@ export default function HomeScreen() {
             <Text style={styles.actionButtonText}>View Usage Insights</Text>
           </TouchableOpacity>
 
+          {/* Cloud Backup Actions */}
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.cloudButton]} 
+            onPress={handleCloudBackup}
+          >
+            <Cloud size={20} color="#34d399" />
+            <Text style={styles.actionButtonText}>Backup to Cloud</Text>
+            {lastBackupDate && (
+              <Text style={styles.backupDate}>
+                Last: {new Date(lastBackupDate).toLocaleDateString()}
+              </Text>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.cloudButton]} 
+            onPress={handleCloudRestore}
+          >
+            <Download size={20} color="#60a5fa" />
+            <Text style={styles.actionButtonText}>Restore from Backup</Text>
+          </TouchableOpacity>
+
           {showManualEntry && (
             <View style={styles.manualEntryCard}>
               <Text style={styles.manualEntryTitle}>Enter Today's Screen Time</Text>
@@ -411,6 +472,60 @@ export default function HomeScreen() {
             <Text style={styles.quickStatValue}>{customGoals.length}</Text>
             <Text style={styles.quickStatLabel}>Custom Goals</Text>
           </TouchableOpacity>
+        </View>
+
+        {/* Senay's Suggestions Section */}
+        <View style={styles.suggestionsSection}>
+          <Text style={styles.sectionTitle}>🧠 Senay's Daily Suggestions</Text>
+          
+          <View style={styles.suggestionCard}>
+            <View style={styles.suggestionHeader}>
+              <Target size={20} color="#34d399" />
+              <Text style={styles.suggestionTitle}>Today's Focus</Text>
+            </View>
+            <Text style={styles.suggestionText}>
+              {isOnTrack 
+                ? "You're on track today! Keep this momentum going. Remember, consistency beats perfection every time."
+                : "Don't worry about today's setback. Tomorrow is a fresh start. Small steps lead to big changes."
+              }
+            </Text>
+          </View>
+
+          <View style={styles.suggestionCard}>
+            <View style={styles.suggestionHeader}>
+              <TrendingDown size={20} color="#60a5fa" />
+              <Text style={styles.suggestionTitle}>Smart Strategy</Text>
+            </View>
+            <Text style={styles.suggestionText}>
+              {currentStreak > 3 
+                ? `Amazing! You've built a ${currentStreak}-day streak. The key is to maintain this rhythm without burning out.`
+                : "Start with small, achievable goals. Even 5 minutes less per day builds momentum and confidence."
+              }
+            </Text>
+          </View>
+
+          <View style={styles.suggestionCard}>
+            <View style={styles.suggestionHeader}>
+              <Zap size={20} color="#fbbf24" />
+              <Text style={styles.suggestionTitle}>Pro Tip</Text>
+            </View>
+            <Text style={styles.suggestionText}>
+              {weeklyAverage > 300 
+                ? "Your weekly average is quite high. Try setting your phone to grayscale mode - it makes apps less appealing!"
+                : "You're already doing great! Consider adding screen-free hours during your peak usage times."
+              }
+            </Text>
+          </View>
+
+          <View style={styles.suggestionCard}>
+            <View style={styles.suggestionHeader}>
+              <Heart size={20} color="#a78bfa" />
+              <Text style={styles.suggestionTitle}>Mindful Reminder</Text>
+            </View>
+            <Text style={styles.suggestionText}>
+              "Every time you choose to put your phone down, you're strengthening your self-discipline muscle. You're not just reducing screen time - you're building a better life."
+            </Text>
+          </View>
         </View>
 
         {/* Reduction Goal Modal */}
@@ -467,7 +582,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 20,
+    paddingBottom: 100, // Increased to account for tab bar
   },
   header: {
     paddingHorizontal: 24,
@@ -475,6 +590,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     backgroundColor: '#1f2937',
     borderBottomWidth: 0,
+    marginBottom: 8,
   },
   headerTitleContainer: {
     flexDirection: 'row',
@@ -496,8 +612,9 @@ const styles = StyleSheet.create({
   },
   progressSection: {
     alignItems: 'center',
-    paddingVertical: 40,
+    paddingVertical: 32,
     position: 'relative',
+    marginBottom: 16,
   },
   progressContent: {
     position: 'absolute',
@@ -521,7 +638,7 @@ const styles = StyleSheet.create({
   },
   goalSelector: {
     paddingHorizontal: 24,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   dropdownButton: {
     flexDirection: 'row',
@@ -543,7 +660,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     padding: 20,
     borderRadius: 16,
-    marginBottom: 24,
+    marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -573,7 +690,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     paddingHorizontal: 24,
     gap: 12,
-    marginBottom: 16,
+    marginBottom: 20,
   },
   statCard: {
     flex: 1,
@@ -615,6 +732,7 @@ const styles = StyleSheet.create({
   actionsSection: {
     paddingHorizontal: 24,
     marginTop: 8,
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 20,
@@ -732,10 +850,21 @@ const styles = StyleSheet.create({
   permissionButtonText: {
     color: '#34d399',
   },
+  cloudButton: {
+    backgroundColor: '#1e293b',
+    borderWidth: 1,
+    borderColor: '#475569',
+  },
+  backupDate: {
+    fontSize: 12,
+    color: '#9ca3af',
+    marginTop: 4,
+    fontStyle: 'italic',
+  },
   quickStatsRow: {
     flexDirection: 'row',
     paddingHorizontal: 24,
-    marginBottom: 24,
+    marginBottom: 32,
     gap: 12,
   },
   quickStat: {
@@ -764,5 +893,39 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#9ca3af',
     textAlign: 'center',
+  },
+  suggestionsSection: {
+    paddingHorizontal: 24,
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  suggestionCard: {
+    backgroundColor: '#1f2937',
+    padding: 20,
+    borderRadius: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  suggestionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  suggestionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginLeft: 8,
+  },
+  suggestionText: {
+    fontSize: 14,
+    color: '#d1d5db',
+    lineHeight: 20,
   },
 });
